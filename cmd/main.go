@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	
+	"github.com/google/uuid"
 
 	"github.com/MukeshG7172/goauth/utils"
 )
@@ -39,6 +41,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user_id := uuid.New()
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
@@ -63,7 +66,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = utils.DB.Exec(context.Background(),
-		`INSERT INTO users (username, hashed_password) VALUES ($1, $2)`, username, hashedPassword)
+		`INSERT INTO users (user_id, username, hashed_password) VALUES ($1, $2, $3)`, user_id, username, hashedPassword)
 	if err != nil {
 		http.Error(w, "Failed to insert user", http.StatusInternalServerError)
 		return
